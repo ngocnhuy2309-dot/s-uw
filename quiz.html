@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trắc nghiệm 32 câu</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; background: #f5f5f5; }
+    h1 { text-align: center; }
+    .question { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .result { font-weight: bold; margin-top: 10px; }
+    button { padding: 10px 15px; margin-top: 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background: #007bff; color: white; }
+    button:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+  <h1>Bài trắc nghiệm (10/32 câu)</h1>
+  <form id="quizForm"></form>
+  <button type="button" onclick="submitQuiz()">Nộp bài</button>
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      {q: "Thời cận đại, giai cấp lãnh đạo các cuộc cách mạng tư sản là", a: ["Nông dân", "Công nhân", "Tri thức", "Tư sản"], correct: 3},
+      {q: "Một trong những nhiệm vụ dân chủ của các cuộc cách mạng tư sản là", a: ["Đòi quyền tự do chính trị cho mỗi người dân", "Đánh đuổi thực dân, giành độc lập dân tộc", "Xoá bỏ tình trạng phong kiến cát cứ", "Thống nhất thị trường, thành lập quốc gia dân tộc"], correct: 0},
+      {q: "Giai cấp lãnh đạo của các cuộc cách mạng tư sản có đặc điểm chung là gì?", a: ["Đại diện cho phương thức sản xuất tư bản chủ nghĩa", "Đều chịu ảnh hưởng của Triết học Ánh sáng", "Đều có nguồn gốc phong kiến", "Đều mong muốn chế độ cộng hoà"], correct: 0},
+      {q: "Một trong những nhiệm vụ dân tộc của các cuộc cách mạng tư sản là", a: ["Xoá bỏ chế độ phong kiến chuyên chế", "Xác lập nền dân chủ tư sản", "Đòi quyền tự do chính trị cho mỗi người dân", "Thống nhất thị trường, thành lập quốc gia dân tộc"], correct: 3},
+      {q: "Động lực cách mạng của các cuộc cách mạng tư sản thời cận đại là", a: ["Giai cấp lãnh đạo và nông dân", "Giai cấp lãnh đạo và nô lệ", "Giai cấp lãnh đạo và quần chúng nhân dân", "Giai cấp tư sản và chủ nô"], correct: 2},
+      {q: "Ý nghĩa chung của các cuộc cách mạng tư sản là", a: ["Xác lập quan hệ sản xuất tư bản chủ nghĩa, thúc đẩy lực lượng sản xuất", "Lật đổ quân chủ chuyên chế, mở đường cho kinh tế tư bản", "Giải phóng nhân dân khỏi thực dân, mở đường cho kinh tế tư bản", "Giải phóng nhân dân, thúc đẩy phong trào giải phóng dân tộc"], correct: 0},
+      {q: "Cuối thế kỉ XVIII, chủ nghĩa tư bản", a: ["Được xác lập ở Hà Lan và Anh", "Mở rộng ra ngoài châu Âu", "Được xác lập ở Italia và Đức", "Trở thành hệ thống thế giới"], correct: 1},
+      {q: "Mục tiêu của các cuộc cách mạng tư sản thời cận đại là", a: ["Xóa bỏ rào cản với kinh tế tư bản", "Lật đổ sự thống trị của tư sản đưa nông dân lên nắm quyền", "Thiết lập nhà nước dân chủ tư sản", "Đưa quý tộc mới lên nắm quyền"], correct: 0},
+      {q: "Cuối thế kỉ XIX - đầu XX, sự tập trung sản xuất và vốn lớn dẫn đến sự xuất hiện", a: ["Thương hội", "Phường hội", "Công trường thủ công", "Tổ chức độc quyền"], correct: 3},
+      {q: "Đến cuối thế kỉ XIX - đầu XX, Anh là “đế quốc mà Mặt Trời không bao giờ lặn” vì", a: ["Hệ thống thuộc địa thu hẹp về xích đạo", "Thuộc địa tập trung ở xích đạo", "Thuộc địa trải rộng khắp các châu lục", "Nhà nước Anh phát triển năng lượng Mặt Trời"], correct: 2},
+      // ... (thêm các câu hỏi còn lại đến 32 câu)
+      {q: "Sự ra đời của phương thức sản xuất tư bản dẫn đến hình thành hai giai cấp cơ bản nào?", a: ["Chủ nô và nô lệ", "Địa chủ và nông dân", "Tư sản và vô sản", "Quý tộc và nông nô"], correct: 2},
+      {q: "Để duy trì lợi nhuận, các nước tư bản đế quốc đã tiến hành", a: ["Tăng cường bóc lột công nhân và xâm lược", "Giảm sản xuất để ổn định giá", "Hợp tác cùng phát triển với châu Á, châu Phi", "Chuyển sang phong kiến"], correct: 0}
+    ];
+
+    // Hàm chọn ngẫu nhiên 10 câu
+    function getRandomQuestions(num) {
+      const shuffled = [...questions].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, num);
+    }
+
+    // Hiển thị 10 câu hỏi ngẫu nhiên
+    const quizForm = document.getElementById("quizForm");
+    const selectedQuestions = getRandomQuestions(10);
+
+    selectedQuestions.forEach((item, index) => {
+      let div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<p><b>Câu ${index+1}:</b> ${item.q}</p>`;
+      item.a.forEach((ans, i) => {
+        div.innerHTML += `<label><input type="radio" name="q${index}" value="${i}"> ${ans}</label><br>`;
+      });
+      quizForm.appendChild(div);
+    });
+
+    // Nộp bài
+    function submitQuiz() {
+      let score = 0;
+      let output = "";
+      selectedQuestions.forEach((item, index) => {
+        const answer = document.querySelector(`input[name="q${index}"]:checked`);
+        if (answer) {
+          if (parseInt(answer.value) === item.correct) {
+            score++;
+            output += `<p>Câu ${index+1}: Đúng</p>`;
+          } else {
+            output += `<p>Câu ${index+1}: Sai (Đáp án đúng: ${item.a[item.correct]})</p>`;
+          }
+        } else {
+          output += `<p>Câu ${index+1}: Chưa trả lời (Đáp án đúng: ${item.a[item.correct]})</p>`;
+        }
+      });
+      document.getElementById("result").innerHTML = `<h2>Kết quả: ${score}/10</h2>` + output;
+    }
+  </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trắc nghiệm 32 câu</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; line-height: 1.6; background: #f5f5f5; }
+    h1 { text-align: center; }
+    .question { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .result { font-weight: bold; margin-top: 10px; }
+    button { padding: 10px 15px; margin-top: 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 5px; background: #007bff; color: white; }
+    button:hover { background: #0056b3; }
+  </style>
+</head>
+<body>
+  <h1>Bài trắc nghiệm (10/32 câu)</h1>
+  <form id="quizForm"></form>
+  <button type="button" onclick="submitQuiz()">Nộp bài</button>
+  <div id="result"></div>
+
+  <script>
+    const questions = [
+      {q: "Thời cận đại, giai cấp lãnh đạo các cuộc cách mạng tư sản là", a: ["Nông dân", "Công nhân", "Tri thức", "Tư sản"], correct: 3},
+      {q: "Một trong những nhiệm vụ dân chủ của các cuộc cách mạng tư sản là", a: ["Đòi quyền tự do chính trị cho mỗi người dân", "Đánh đuổi thực dân, giành độc lập dân tộc", "Xoá bỏ tình trạng phong kiến cát cứ", "Thống nhất thị trường, thành lập quốc gia dân tộc"], correct: 0},
+      {q: "Giai cấp lãnh đạo của các cuộc cách mạng tư sản có đặc điểm chung là gì?", a: ["Đại diện cho phương thức sản xuất tư bản chủ nghĩa", "Đều chịu ảnh hưởng của Triết học Ánh sáng", "Đều có nguồn gốc phong kiến", "Đều mong muốn chế độ cộng hoà"], correct: 0},
+      {q: "Một trong những nhiệm vụ dân tộc của các cuộc cách mạng tư sản là", a: ["Xoá bỏ chế độ phong kiến chuyên chế", "Xác lập nền dân chủ tư sản", "Đòi quyền tự do chính trị cho mỗi người dân", "Thống nhất thị trường, thành lập quốc gia dân tộc"], correct: 3},
+      {q: "Động lực cách mạng của các cuộc cách mạng tư sản thời cận đại là", a: ["Giai cấp lãnh đạo và nông dân", "Giai cấp lãnh đạo và nô lệ", "Giai cấp lãnh đạo và quần chúng nhân dân", "Giai cấp tư sản và chủ nô"], correct: 2},
+      {q: "Ý nghĩa chung của các cuộc cách mạng tư sản là", a: ["Xác lập quan hệ sản xuất tư bản chủ nghĩa, thúc đẩy lực lượng sản xuất", "Lật đổ quân chủ chuyên chế, mở đường cho kinh tế tư bản", "Giải phóng nhân dân khỏi thực dân, mở đường cho kinh tế tư bản", "Giải phóng nhân dân, thúc đẩy phong trào giải phóng dân tộc"], correct: 0},
+      {q: "Cuối thế kỉ XVIII, chủ nghĩa tư bản", a: ["Được xác lập ở Hà Lan và Anh", "Mở rộng ra ngoài châu Âu", "Được xác lập ở Italia và Đức", "Trở thành hệ thống thế giới"], correct: 1},
+      {q: "Mục tiêu của các cuộc cách mạng tư sản thời cận đại là", a: ["Xóa bỏ rào cản với kinh tế tư bản", "Lật đổ sự thống trị của tư sản đưa nông dân lên nắm quyền", "Thiết lập nhà nước dân chủ tư sản", "Đưa quý tộc mới lên nắm quyền"], correct: 0},
+      {q: "Cuối thế kỉ XIX - đầu XX, sự tập trung sản xuất và vốn lớn dẫn đến sự xuất hiện", a: ["Thương hội", "Phường hội", "Công trường thủ công", "Tổ chức độc quyền"], correct: 3},
+      {q: "Đến cuối thế kỉ XIX - đầu XX, Anh là “đế quốc mà Mặt Trời không bao giờ lặn” vì", a: ["Hệ thống thuộc địa thu hẹp về xích đạo", "Thuộc địa tập trung ở xích đạo", "Thuộc địa trải rộng khắp các châu lục", "Nhà nước Anh phát triển năng lượng Mặt Trời"], correct: 2},
+      // ... (thêm các câu hỏi còn lại đến 32 câu)
+      {q: "Sự ra đời của phương thức sản xuất tư bản dẫn đến hình thành hai giai cấp cơ bản nào?", a: ["Chủ nô và nô lệ", "Địa chủ và nông dân", "Tư sản và vô sản", "Quý tộc và nông nô"], correct: 2},
+      {q: "Để duy trì lợi nhuận, các nước tư bản đế quốc đã tiến hành", a: ["Tăng cường bóc lột công nhân và xâm lược", "Giảm sản xuất để ổn định giá", "Hợp tác cùng phát triển với châu Á, châu Phi", "Chuyển sang phong kiến"], correct: 0}
+    ];
+
+    // Hàm chọn ngẫu nhiên 10 câu
+    function getRandomQuestions(num) {
+      const shuffled = [...questions].sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, num);
+    }
+
+    // Hiển thị 10 câu hỏi ngẫu nhiên
+    const quizForm = document.getElementById("quizForm");
+    const selectedQuestions = getRandomQuestions(10);
+
+    selectedQuestions.forEach((item, index) => {
+      let div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `<p><b>Câu ${index+1}:</b> ${item.q}</p>`;
+      item.a.forEach((ans, i) => {
+        div.innerHTML += `<label><input type="radio" name="q${index}" value="${i}"> ${ans}</label><br>`;
+      });
+      quizForm.appendChild(div);
+    });
+
+    // Nộp bài
+    function submitQuiz() {
+      let score = 0;
+      let output = "";
+      selectedQuestions.forEach((item, index) => {
+        const answer = document.querySelector(`input[name="q${index}"]:checked`);
+        if (answer) {
+          if (parseInt(answer.value) === item.correct) {
+            score++;
+            output += `<p>Câu ${index+1}: Đúng</p>`;
+          } else {
+            output += `<p>Câu ${index+1}: Sai (Đáp án đúng: ${item.a[item.correct]})</p>`;
+          }
+        } else {
+          output += `<p>Câu ${index+1}: Chưa trả lời (Đáp án đúng: ${item.a[item.correct]})</p>`;
+        }
+      });
+      document.getElementById("result").innerHTML = `<h2>Kết quả: ${score}/10</h2>` + output;
+    }
+  </script>
+</body>
+</html>
